@@ -31,6 +31,11 @@ spring:
       test-while-idle: true
       min-evictable-idle-time-millis: 100000
       time-between-eviction-runs-millis: 60000
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+    timeout: 10000
 
 http-pool:
   max-total: 100

@@ -109,6 +109,23 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
     </dependency>
+    <!-- redis 实现 -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+      <exclusions>
+        <exclusion>
+          <artifactId>jedis</artifactId>
+          <groupId>redis.clients</groupId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- redis操作：lettuce客户端包 -->
+    <dependency>
+      <groupId>biz.paluch.redis</groupId>
+      <artifactId>lettuce</artifactId>
+      <version>4.4.6.Final</version>
+    </dependency>
   </dependencies>
 
   <build>
