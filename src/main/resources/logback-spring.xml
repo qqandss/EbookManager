@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+
+	<!-- 文件输出格式 -->
+	<property name="PATTERN" value="%date{yyyy-MM-dd HH:mm:ss.SSS} | %highlight(%-5level) | %boldYellow(%thread) | %boldGreen(%logger) | %file:%line | %msg%n"/>
+
+	<!--读取配置中心的属性-->
+	<!-- 文件输出路径 -->
+	<springProperty scope="context" name="FILE_PATH" source="spring.logback.file-path" defaultValue="log"/>
+	<!--<springProperty scope="context" name="FILE_PATH" source="spring.logback.file-path" defaultValue="D:\\DProjects\\orchestrator\\code\\zlogs"/>-->
+	<!-- 平台名 -->
+	<springProperty scope="context" name="PLATFORM_NAME" source="spring.platform.name" />
+	<!-- 服务名 -->
+	<springProperty scope="context" name="APP_NAME" source="spring.application.name" />
+	<!-- 日志文件最大保留历史数量 -->
+	<springProperty scope="context" name="maxHistory" source="spring.logback.max-history" />
+	<!-- 开发环境日志文件输出级别 -->
+	<springProperty scope="context" name="devLevel" source="spring.logback.devLevel" />
+	<!-- 测试环境日志文件输出级别 -->
+	<springProperty scope="context" name="testLevel" source="spring.logback.testLevel" />
+	<!-- 生产环境日志文件输出级别 -->
+	<springProperty scope="context" name="prodLevel" source="spring.logback.prodLevel" />
+	<!-- logger -->
+	<logger name="com.henanuniversity.wangqi" level="info"/>
+
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${PATTERN}</pattern>
+		</encoder>
+
+	</appender>
+
+	<!-- 按照每天生成日志文件 -->
+	<appender name="FILE-INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--活动日志文件名-->
+		<file>${FILE_PATH}/info.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!--日志文件输出的文件名 -->
+			<FileNamePattern>${FILE_PATH}/info.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<!--日志文件保留天数 -->
+			<MaxHistory>30</MaxHistory>
+			<MaxFileSize>50MB</MaxFileSize>
+			<totalSizeCap>1GB</totalSizeCap>
+			<cleanHistoryOnStart>true</cleanHistoryOnStart>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+			<pattern>${PATTERN}</pattern>
+		</encoder>
+	</appender>
+	<!-- 按照每天生成日志文件 -->
+	<appender name="FILE-ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--活动日志文件名-->
+		<file>${FILE_PATH}/error.log</file>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+		<rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+			<!--日志文件输出的文件名 -->
+			<FileNamePattern>${FILE_PATH}/error.%d{yyyy-MM-dd}.%i.log</FileNamePattern>
+			<!--日志文件保留天数 -->
+			<MaxHistory>30</MaxHistory>
+			<MaxFileSize>50MB</MaxFileSize>
+			<totalSizeCap>1GB</totalSizeCap>
+			<cleanHistoryOnStart>true</cleanHistoryOnStart>
+		</rollingPolicy>
+		<encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+			<!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+			<pattern>${PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+
+
+	<!-- 开发环境 -->
+	<springProfile name="dev">
+		<root level="${devLevel}">
+			<appender-ref ref="CONSOLE"/>
+		</root>
+		<!-- 扫描包名打印sql
+		<logger name="com.henanuniversity.wangqi" level="info"/>-->
+	</springProfile>
+
+	<!-- 测试环境 -->
+	<springProfile name="test">
+		<root level="${testLevel}">
+			<appender-ref ref="CONSOLE"/>
+			<appender-ref ref="FILE-INFO" level="info"/>
+			<appender-ref ref="FILE-ERROR" level="error"/>
+		</root>
+	</springProfile>
+
+	<!-- 生产环境 -->
+	<springProfile name="prod">
+		<root level="${prodLevel}">
+			<!--<appender-ref ref="CONSOLE"/>-->
+			<appender-ref ref="FILE-INFO" level="info"/>
+			<appender-ref ref="FILE-ERROR" level="error"/>
+		</root>
+	</springProfile>
+</configuration>
